@@ -372,6 +372,7 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiExamExam extends Struct.CollectionTypeSchema {
   collectionName: 'exams';
   info: {
+    description: '';
     displayName: 'Exam';
     pluralName: 'exams';
     singularName: 'exam';
@@ -383,7 +384,6 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    createdDateTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
     examData: Schema.Attribute.JSON & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::exam.exam'> &
@@ -393,7 +393,6 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    updatedDateTime: Schema.Attribute.DateTime & Schema.Attribute.Required;
     user: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'

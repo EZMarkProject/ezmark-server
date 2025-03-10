@@ -4,7 +4,8 @@
   "info": {
     "singularName": "exam",
     "pluralName": "exams",
-    "displayName": "Exam"
+    "displayName": "Exam",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -22,14 +23,6 @@
     },
     "projectName": {
       "type": "string"
-    },
-    "createdDateTime": {
-      "type": "datetime",
-      "required": true
-    },
-    "updatedDateTime": {
-      "type": "datetime",
-      "required": true
     }
   }
 }
