@@ -36,18 +36,22 @@ export default {
             const pdfFileName = `Exam-${documentId}.pdf`;
             const pdfPath = path.join(pdfDir, pdfFileName);
 
+            console.log('开始生成pdf文件');
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
             await page.setExtraHTTPHeaders({
                 'Authorization': JWT
             });
+            console.log('开始进入网页');
             await page.goto(URL, { waitUntil: 'networkidle0' });
+            console.log('进入网页成功, 开始生成pdf');
             await page.pdf({ path: pdfPath, format: 'A4', margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' } });
+            console.log('pdf生成成功');
             await browser.close();
+            console.log('浏览器关闭');
 
             // 检查文件是否生成成功
             if (!fs.existsSync(pdfPath)) {
-                console.log('没有生成pdf文件');
                 return ctx.badRequest('PDF generation failed');
             }
 
@@ -58,7 +62,6 @@ export default {
                 }
             });
         } catch (error) {
-            console.log(JSON.stringify(error))
             return ctx.badRequest('PDF generation failed');
         }
     }
