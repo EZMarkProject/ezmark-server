@@ -36,25 +36,25 @@ export default {
             const pdfFileName = `Exam-${documentId}.pdf`;
             const pdfPath = path.join(pdfDir, pdfFileName);
 
-            console.log('开始生成pdf文件');
-	    const browser = await puppeteer.launch(
-		   {
-		   executablePath: '/usr/bin/chromium-browser'
-		   }
-	    );
-            console.log('浏览器启动成功');
+            console.log(`开始生成pdf文件 ${documentId}`);
+            const browser = await puppeteer.launch(
+                process.env.NODE_ENV === 'development' ? {} : {
+                    executablePath: '/usr/bin/chromium-browser' // 生产环境需要指定浏览器路径
+                }
+            );
+            console.log(`浏览器启动成功 ${documentId}`);
             const page = await browser.newPage();
-            console.log('页面启动成功');
+            console.log(`页面启动成功 ${documentId}`);
             await page.setExtraHTTPHeaders({
                 'Authorization': JWT
             });
-            console.log('开始进入网页');
+            console.log(`开始进入网页 ${documentId}`);
             await page.goto(URL, { waitUntil: 'networkidle0' });
-            console.log('进入网页成功, 开始生成pdf');
+            console.log(`进入网页成功 ${documentId}`);
             await page.pdf({ path: pdfPath, format: 'A4', margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' } });
-            console.log('pdf生成成功');
+            console.log(`pdf生成成功 ${documentId}`);
             await browser.close();
-            console.log('浏览器关闭');
+            console.log(`浏览器关闭 ${documentId}`);
 
             // 检查文件是否生成成功
             if (!fs.existsSync(pdfPath)) {
