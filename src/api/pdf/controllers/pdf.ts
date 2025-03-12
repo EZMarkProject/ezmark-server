@@ -47,6 +47,7 @@ export default {
 
             // 检查文件是否生成成功
             if (!fs.existsSync(pdfPath)) {
+                console.log('没有生成pdf文件');
                 return ctx.badRequest('PDF generation failed');
             }
 
@@ -57,6 +58,7 @@ export default {
                 }
             });
         } catch (error) {
+            console.log(JSON.stringify(error))
             return ctx.badRequest('PDF generation failed');
         }
     }
