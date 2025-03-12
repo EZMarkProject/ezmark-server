@@ -27,11 +27,6 @@ export default {
                 fs.mkdirSync(pdfDir, { recursive: true });
             }
 
-            // 删除目录中所有文件
-            fs.readdirSync(pdfDir).forEach(file => {
-                fs.unlinkSync(path.join(pdfDir, file));
-            });
-
             // 使用puppeteer生成pdf
             const pdfFileName = `Exam-${documentId}.pdf`;
             const pdfPath = path.join(pdfDir, pdfFileName);
