@@ -37,7 +37,11 @@ export default {
             const pdfPath = path.join(pdfDir, pdfFileName);
 
             console.log('开始生成pdf文件');
-            const browser = await puppeteer.launch();
+	    const browser = await puppeteer.launch(
+		   {
+		   executablePath: '/usr/bin/chromium-browser'
+		   }
+	    );
             console.log('浏览器启动成功');
             const page = await browser.newPage();
             console.log('页面启动成功');
