@@ -2,8 +2,8 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
-const MARGIN_X = 8.46;
-const MARGIN_Y = 8.46;
+const MARGIN_X = 8.47;
+const MARGIN_Y = 8.47;
 
 export default {
     // 获取PDF列表
