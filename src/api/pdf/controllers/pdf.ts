@@ -2,6 +2,9 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
+const MARGIN_X = 8.46;
+const MARGIN_Y = 8.46;
+
 export default {
     // 获取PDF列表
     async find(ctx) {
@@ -46,7 +49,7 @@ export default {
             console.log(`开始进入网页 ${documentId}`);
             await page.goto(URL, { waitUntil: 'networkidle0' });
             console.log(`进入网页成功 ${documentId}`);
-            await page.pdf({ path: pdfPath, format: 'A4', margin: { top: '8mm', right: '8mm', bottom: '8mm', left: '8mm' } });
+            await page.pdf({ path: pdfPath, format: 'A4', margin: { top: `${MARGIN_Y}mm`, right: `${MARGIN_X}mm`, bottom: `${MARGIN_Y}mm`, left: `${MARGIN_X}mm` } });
             console.log(`pdf生成成功 ${documentId}`);
             await browser.close();
             console.log(`浏览器关闭 ${documentId}`);
