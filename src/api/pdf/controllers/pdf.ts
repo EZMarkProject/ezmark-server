@@ -2,8 +2,8 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
-const MARGIN_X = 8.47;
-const MARGIN_Y = 8.47;
+const MARGIN_X = 0;
+const MARGIN_Y = 0;
 
 export default {
     // 获取PDF列表
@@ -20,7 +20,7 @@ export default {
         try {
             // 从参数中获取documentId
             const documentId = ctx.params.id;
-            const URL = `https://csi420-01-vm7.ucd.ie/render/${documentId}`;
+            const URL = process.env.NODE_ENV === 'development' ? `http://localhost:3000/render/${documentId}` : `https://csi420-01-vm7.ucd.ie/render/${documentId}`;
             // 从请求头获取JWT
             const JWT = ctx.request.header.authorization;
 
@@ -46,10 +46,10 @@ export default {
             await page.setExtraHTTPHeaders({
                 'Authorization': JWT
             });
-            console.log(`开始进入网页 ${documentId}`);
+            console.log(`开始进入网页 ${URL}`);
             await page.goto(URL, { waitUntil: 'networkidle0' });
             console.log(`进入网页成功 ${documentId}`);
-            await page.pdf({ path: pdfPath, format: 'A4', margin: { top: `${MARGIN_Y}mm`, right: `${MARGIN_X}mm`, bottom: `${MARGIN_Y}mm`, left: `${MARGIN_X}mm` } });
+            await page.pdf({ path: pdfPath, format: 'A4' });
             console.log(`pdf生成成功 ${documentId}`);
             await browser.close();
             console.log(`浏览器关闭 ${documentId}`);
