@@ -372,12 +372,13 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiClassClass extends Struct.CollectionTypeSchema {
   collectionName: 'classes';
   info: {
+    description: '';
     displayName: 'Class';
     pluralName: 'classes';
     singularName: 'class';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -408,7 +409,7 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
     singularName: 'exam';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -439,7 +440,7 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
     singularName: 'student';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     classes: Schema.Attribute.Relation<'manyToMany', 'api::class.class'>;
