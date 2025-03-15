@@ -70,6 +70,18 @@
       "relation": "oneToMany",
       "target": "api::exam.exam",
       "mappedBy": "user"
+    },
+    "students": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::student.student",
+      "mappedBy": "teacher"
+    },
+    "classes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::class.class",
+      "mappedBy": "teacher"
     }
   }
 }
