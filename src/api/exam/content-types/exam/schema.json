@@ -23,6 +23,12 @@
     },
     "projectName": {
       "type": "string"
+    },
+    "schdules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::schdule.schdule",
+      "mappedBy": "exam"
     }
   }
 }

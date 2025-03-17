@@ -389,6 +389,7 @@ export interface ApiClassClass extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    schdules: Schema.Attribute.Relation<'oneToMany', 'api::schdule.schdule'>;
     students: Schema.Attribute.Relation<'manyToMany', 'api::student.student'>;
     teacher: Schema.Attribute.Relation<
       'manyToOne',
@@ -421,6 +422,7 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     projectName: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    schdules: Schema.Attribute.Relation<'oneToMany', 'api::schdule.schdule'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -428,6 +430,36 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiSchduleSchdule extends Struct.CollectionTypeSchema {
+  collectionName: 'schdules';
+  info: {
+    displayName: 'Schdule';
+    pluralName: 'schdules';
+    singularName: 'schdule';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    class: Schema.Attribute.Relation<'manyToOne', 'api::class.class'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    exam: Schema.Attribute.Relation<'manyToOne', 'api::exam.exam'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::schdule.schdule'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1005,6 +1037,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::class.class': ApiClassClass;
       'api::exam.exam': ApiExamExam;
+      'api::schdule.schdule': ApiSchduleSchdule;
       'api::student.student': ApiStudentStudent;
       'api::test.test': ApiTestTest;
       'plugin::content-releases.release': PluginContentReleasesRelease;

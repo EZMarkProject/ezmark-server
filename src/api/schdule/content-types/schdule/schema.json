@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "schdules",
+  "info": {
+    "singularName": "schdule",
+    "pluralName": "schdules",
+    "displayName": "Schdule"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "exam": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::exam.exam",
+      "inversedBy": "schdules"
+    },
+    "class": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::class.class",
+      "inversedBy": "schdules"
+    }
+  }
+}

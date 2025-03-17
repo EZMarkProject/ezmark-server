@@ -26,6 +26,12 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "classes"
+    },
+    "schdules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::schdule.schdule",
+      "mappedBy": "class"
     }
   }
 }
