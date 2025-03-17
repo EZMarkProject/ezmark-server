@@ -83,10 +83,10 @@
       "target": "api::class.class",
       "mappedBy": "teacher"
     },
-    "schdules": {
+    "schedules": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::schdule.schdule",
+      "target": "api::schedule.schedule",
       "mappedBy": "teacher"
     }
   }

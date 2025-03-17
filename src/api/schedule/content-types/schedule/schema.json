@@ -1,11 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "schdules",
+  "collectionName": "schedules",
   "info": {
-    "singularName": "schdule",
-    "pluralName": "schdules",
-    "displayName": "Schdule",
-    "description": ""
+    "singularName": "schedule",
+    "pluralName": "schedules",
+    "displayName": "Schedule"
   },
   "options": {
     "draftAndPublish": false
@@ -15,23 +14,23 @@
       "type": "string",
       "required": true
     },
-    "exam": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::exam.exam",
-      "inversedBy": "schdules"
-    },
     "class": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::class.class",
-      "inversedBy": "schdules"
+      "inversedBy": "schedules"
+    },
+    "exam": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::exam.exam",
+      "inversedBy": "schedules"
     },
     "teacher": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "schdules"
+      "inversedBy": "schedules"
     }
   }
 }

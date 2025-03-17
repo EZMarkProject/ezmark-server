@@ -389,7 +389,7 @@ export interface ApiClassClass extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    schdules: Schema.Attribute.Relation<'oneToMany', 'api::schdule.schdule'>;
+    schedules: Schema.Attribute.Relation<'oneToMany', 'api::schedule.schedule'>;
     students: Schema.Attribute.Relation<'manyToMany', 'api::student.student'>;
     teacher: Schema.Attribute.Relation<
       'manyToOne',
@@ -422,7 +422,7 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     projectName: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    schdules: Schema.Attribute.Relation<'oneToMany', 'api::schdule.schdule'>;
+    schedules: Schema.Attribute.Relation<'oneToMany', 'api::schedule.schedule'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -433,13 +433,12 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiSchduleSchdule extends Struct.CollectionTypeSchema {
-  collectionName: 'schdules';
+export interface ApiScheduleSchedule extends Struct.CollectionTypeSchema {
+  collectionName: 'schedules';
   info: {
-    description: '';
-    displayName: 'Schdule';
-    pluralName: 'schdules';
-    singularName: 'schdule';
+    displayName: 'Schedule';
+    pluralName: 'schedules';
+    singularName: 'schedule';
   };
   options: {
     draftAndPublish: false;
@@ -453,7 +452,7 @@ export interface ApiSchduleSchdule extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::schdule.schdule'
+      'api::schedule.schedule'
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
@@ -1017,7 +1016,7 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
-    schdules: Schema.Attribute.Relation<'oneToMany', 'api::schdule.schdule'>;
+    schedules: Schema.Attribute.Relation<'oneToMany', 'api::schedule.schedule'>;
     students: Schema.Attribute.Relation<'manyToMany', 'api::student.student'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1043,7 +1042,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::class.class': ApiClassClass;
       'api::exam.exam': ApiExamExam;
-      'api::schdule.schdule': ApiSchduleSchdule;
+      'api::schedule.schedule': ApiScheduleSchedule;
       'api::student.student': ApiStudentStudent;
       'api::test.test': ApiTestTest;
       'plugin::content-releases.release': PluginContentReleasesRelease;
