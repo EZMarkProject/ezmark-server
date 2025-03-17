@@ -436,6 +436,7 @@ export interface ApiExamExam extends Struct.CollectionTypeSchema {
 export interface ApiSchduleSchdule extends Struct.CollectionTypeSchema {
   collectionName: 'schdules';
   info: {
+    description: '';
     displayName: 'Schdule';
     pluralName: 'schdules';
     singularName: 'schdule';
@@ -457,6 +458,10 @@ export interface ApiSchduleSchdule extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    teacher: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1012,6 +1017,7 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    schdules: Schema.Attribute.Relation<'oneToMany', 'api::schdule.schdule'>;
     students: Schema.Attribute.Relation<'manyToMany', 'api::student.student'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

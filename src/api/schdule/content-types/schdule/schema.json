@@ -4,7 +4,8 @@
   "info": {
     "singularName": "schdule",
     "pluralName": "schdules",
-    "displayName": "Schdule"
+    "displayName": "Schdule",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -24,6 +25,12 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::class.class",
+      "inversedBy": "schdules"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
       "inversedBy": "schdules"
     }
   }
