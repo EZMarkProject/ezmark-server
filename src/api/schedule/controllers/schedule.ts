@@ -3,6 +3,7 @@
  */
 
 import { factories } from '@strapi/strapi'
+import { startPipeline } from '../../../utils/pipeline';
 
 export default factories.createCoreController('api::schedule.schedule', ({ strapi }) => ({
     /**
@@ -16,8 +17,8 @@ export default factories.createCoreController('api::schedule.schedule', ({ strap
                 return ctx.badRequest('documentId is required');
             }
 
-            //要给另一个线程发送启动流水线的任务
-
+            //启动一个异步任务，专门处理流水线
+            startPipeline(documentId);
 
             // 成功的返回值
             const result = {
