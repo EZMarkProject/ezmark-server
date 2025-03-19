@@ -100,12 +100,32 @@ export interface ExamScheduleResult {
     pdfUrl: string; // 试卷PDF的url, '/uploads/exam_scan_732425fbd9.pdf
     papers: Paper[]; // 在服务器切割完PDF后设置这个字段
     studentPapers: StudentPaper[]; // 学生答卷,根据卷头信息匹配对应的paper
+    matchResult: MatchResult;
+}
+
+// 试卷匹配结果
+export interface MatchResult {
+    matched: {
+        studentId: string;
+        paperId: string;
+        headerImgUrl: string;
+    }[],
+    unmatched: {
+        studentIds: string[];
+        paper: {
+            paperId: string;
+            headerImgUrl: string;
+        }[]
+    }
+    done: boolean;
 }
 
 export interface Paper {
     paperId: string; // 试卷id
     startPage: number; // 开始页码
     endPage: number; // 结束页码
+    name: string; // 学生姓名
+    studentId: string; // 学生id
 }
 
 export interface StudentPaper {

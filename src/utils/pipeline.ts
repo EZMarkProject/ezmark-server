@@ -1,5 +1,5 @@
 import path from "path";
-import { Class, ExamSchedule, Paper, User } from "../../types/type";
+import { Class, ExamSchedule, Paper, Student, User } from "../../types/type";
 import fs from 'fs';
 import { ExamResponse } from "../../types/exam";
 import { PDFDocument } from "pdf-lib";
@@ -93,18 +93,8 @@ export async function startPipeline(documentId: string) {
             fs.copyFileSync(path.join(allImagesDir, image), path.join(paperDir, `page-${index}.png`));
         });
 
-        // 5.4 更新Schedule的result.papers,追加一条
-        papers.push({ paperId, startPage, endPage })
-        await strapi.documents('api::schedule.schedule').update({
-            documentId: schedule.documentId,
-            data: {
-                result: JSON.stringify({
-                    ...schedule.result,
-                    papers
-                })
-            }
-        });
-
+        // 5.4 更新papers数组,追加一条
+        papers.push({ paperId, startPage, endPage, name: '', studentId: '' })
         // 5.5 根据Exam的数据，切割题目 public/pipeline/{scheduleDocumentId}/{paperId}/questions
         const questionsDir = path.join(paperDir, 'questions');
         if (!fs.existsSync(questionsDir)) {
@@ -140,6 +130,7 @@ export async function startPipeline(documentId: string) {
     }
 
     // 6. VLM识别姓名和学号
+    // 6.1 识别所有header
     console.log(`Start recognizing header... for schedule ${schedule.documentId}`)
     const headerResults = await Promise.all(headerImagePaths.map(async (path) => {
         const header = await recognizeHeader(path);
@@ -148,5 +139,76 @@ export async function startPipeline(documentId: string) {
     console.log(headerResults)
     console.log(`End recognizing header... for schedule ${schedule.documentId}`)
 
-    // 7. 和Classes的students进行比对和关联
+    // 6.1 更新papers数组,追加name和studentId
+    papers.forEach((paper, index) => {
+        paper.name = headerResults[index].name;
+        paper.studentId = headerResults[index].studentId;
+    });
+    // 6.2 更新Schedule的result.papers
+    await strapi.documents('api::schedule.schedule').update({
+        documentId: schedule.documentId,
+        data: {
+            result: JSON.stringify({
+                ...schedule.result,
+                papers
+            })
+        }
+    });
+
+    // 7. 和students和papers进行比对和关联
+    const students = classData.students;
+
+    // 创建匹配和未匹配记录
+    const matchedPairs: { paper: Paper, student: Student }[] = []; // 已经匹配好的对
+    const unmatchedPapers: Paper[] = []; // 未匹配到学生的试卷
+    const matchedStudentIds = new Set();
+
+    // 精确匹配：遍历试卷查找匹配的学生
+    for (const paper of papers) {
+        const matchedStudent = students.find(student => student.studentId === paper.studentId);
+        if (matchedStudent) {
+            // 找到匹配的学生
+            matchedPairs.push({
+                paper,
+                student: matchedStudent
+            });
+            matchedStudentIds.add(matchedStudent.studentId);
+        } else {
+            // 未找到匹配的学生
+            unmatchedPapers.push(paper);
+        }
+    }
+    // 找出未匹配的学生
+    const unmatchedStudents = students.filter(student => !matchedStudentIds.has(student.studentId));
+    // 记录匹配和未匹配信息
+    console.log(`匹配成功: ${matchedPairs.length} 份试卷`);
+    console.log(`未匹配试卷: ${unmatchedPapers.length} 份`);
+    console.log(`未匹配学生: ${unmatchedStudents.length} 名`);
+
+    // 8. 更新Schedule的result，添加匹配结果
+    await strapi.documents('api::schedule.schedule').update({
+        documentId: schedule.documentId,
+        data: {
+            result: JSON.stringify({
+                ...schedule.result,
+                matchResult: {
+                    matched: matchedPairs.map(pair => ({
+                        studentId: pair.student.studentId,
+                        paperId: pair.paper.paperId,
+                        headerImgUrl: path.join('pipeline', schedule.documentId, pair.paper.paperId, 'questions', `${headerComponentId}.png`)
+                    })),
+                    unmatched: {
+                        studentIds: unmatchedStudents.map(student => student.studentId),
+                        papers: unmatchedPapers.map(paper => ({
+                            paperId: paper.paperId,
+                            headerImgUrl: path.join('pipeline', schedule.documentId, paper.paperId, 'questions', `${headerComponentId}.png`)
+                        }))
+                    },
+                    done: unmatchedPapers.length === 0 && unmatchedStudents.length === 0
+                }
+            })
+        }
+    });
+
+    // END: 当前流水线结束，在前端展示结果，前端通过接口开启下一个流水线
 }
