@@ -16,6 +16,7 @@
     "@strapi/strapi": "5.10.3",
     "better-sqlite3": "11.3.0",
     "nanoid": "^5.1.5",
+    "openai": "^4.87.4",
     "pdf-lib": "^1.17.1",
     "pdf-to-png-converter": "^3.6.5",
     "puppeteer": "^24.4.0",
@@ -23,7 +24,8 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
     "sharp": "^0.33.5",
-    "styled-components": "^6.0.0"
+    "styled-components": "^6.0.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^20",

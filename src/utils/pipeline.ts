@@ -7,6 +7,7 @@ import pdf2png from "./pdf2png";
 import { nanoid } from "nanoid";
 import sharp from "sharp";
 import { mmToPixels } from "./tools";
+import { recognizeHeader } from "./llm";
 
 const PADDING = 70;
 
@@ -73,6 +74,8 @@ export async function startPipeline(documentId: string) {
 
     // 5.3 根据Exam的数据分割PDF文件成多份试卷，保存到不同的文件夹 public/pipeline/{scheduleDocumentId}/{paperId}
     const papers: Paper[] = [] // 保存所有试卷的id, startPage, endPage
+    const headerComponentId = exam.examData.components.find(com => com.type === 'default-header').id;
+    const headerImagePaths = []
     for (let i = 0; i < studentCount; i++) {
         const paperId = nanoid()
         const paperDir = path.join(rootDir, 'public', 'pipeline', schedule.documentId, paperId);
@@ -131,8 +134,19 @@ export async function startPipeline(documentId: string) {
                 await image.clone().extract({ left, top, width, height }).toFile(outputFilePath);
             }
         }
+
+        // 把Header添加到数组中
+        headerImagePaths.push(path.join(questionsDir, `${headerComponentId}.png`))
     }
 
     // 6. VLM识别姓名和学号
+    console.log(`Start recognizing header... for schedule ${schedule.documentId}`)
+    const headerResults = await Promise.all(headerImagePaths.map(async (path) => {
+        const header = await recognizeHeader(path);
+        return header;
+    }));
+    console.log(headerResults)
+    console.log(`End recognizing header... for schedule ${schedule.documentId}`)
 
+    // 7. 和Classes的students进行比对和关联
 }
