@@ -117,7 +117,7 @@ export async function startPipeline(documentId: string) {
                 const outputFilePath = path.join(questionsDir, `${comp.id}.png`); // 组件的id作为文件名
                 // 将毫米转换为像素
                 const left = 0;
-                const top = mmToPixels(rect.top, imageInfo) - PADDING;
+                const top = Math.max(mmToPixels(rect.top, imageInfo) - PADDING, 0);
                 const width = imageInfo.width!;
                 const height = mmToPixels(rect.height, imageInfo) + PADDING * 2;
                 // 裁剪图片
@@ -191,6 +191,7 @@ export async function startPipeline(documentId: string) {
         data: {
             result: JSON.stringify({
                 ...schedule.result,
+                progress: 'MATCH_DONE', // 更新progress
                 matchResult: {
                     matched: matchedPairs.map(pair => ({
                         studentId: pair.student.studentId,

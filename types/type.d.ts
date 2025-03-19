@@ -90,9 +90,11 @@ export interface ExamSchedule {
 /**
  * CREATED: 已经创建Schedule,但还没有上传PDF
  * UPLOADED: 已经上传PDF,但还没有开始流水线
+ * MATCH_START: 第一部分流水线已经开始（识别学生id，匹配结果）
+ * MATCH_DONE: 匹配结果以经生成完毕
  * DONE: 流水线已经完成,可以去查看结果
  */
-type ExamScheduleProgress = 'CREATED' | 'UPLOADED' | 'DONE'
+type ExamScheduleProgress = 'CREATED' | 'UPLOADED' | 'MATCH_START' | 'MATCH_DONE' | 'DONE'
 
 // 在试卷提交后的所有数据
 export interface ExamScheduleResult {
