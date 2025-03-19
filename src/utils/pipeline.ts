@@ -4,6 +4,7 @@ import fs from 'fs';
 import { ExamResponse } from "../../types/exam";
 import { PDFDocument } from "pdf-lib";
 import pdf2png from "./pdf2png";
+import { nanoid } from "nanoid";
 
 // 启动一个异步任务，专门处理流水线
 export async function startPipeline(documentId: string) {
@@ -65,4 +66,28 @@ export async function startPipeline(documentId: string) {
         fs.mkdirSync(allImagesDir, { recursive: true });
     }
     await pdf2png(pdfPath, allImagesDir);
+
+    // 5.3 根据Exam的数据分割PDF文件成多份试卷，保存到不同的文件夹 public/pipeline/{scheduleDocumentId}/{paperId}
+    for (let i = 0; i < studentCount; i++) {
+        const paperId = nanoid()
+        const paperDir = path.join(rootDir, 'public', 'pipeline', schedule.documentId, paperId);
+        if (!fs.existsSync(paperDir)) {
+            fs.mkdirSync(paperDir, { recursive: true });
+        }
+        // 计算页面范围
+        const startPage = i * pagesPerExam;
+        const endPage = startPage + pagesPerExam;
+        console.log(startPage, endPage)
+        // 根据页面范围，从allImagesDir中获取图片
+        const images = fs.readdirSync(allImagesDir);
+        const imagesInRange = images.slice(startPage, endPage);
+        console.log(imagesInRange)
+        // 将图片保存到paperDir中
+        imagesInRange.forEach((image, index) => {
+            fs.copyFileSync(path.join(allImagesDir, image), path.join(paperDir, `page-${index}.png`));
+        });
+    }
+
+    // 5.4 更新Schedule的result.papers
+
 }
