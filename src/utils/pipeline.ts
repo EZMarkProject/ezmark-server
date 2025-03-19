@@ -5,6 +5,10 @@ import { ExamResponse } from "../../types/exam";
 import { PDFDocument } from "pdf-lib";
 import pdf2png from "./pdf2png";
 import { nanoid } from "nanoid";
+import sharp from "sharp";
+import { mmToPixels } from "./tools";
+
+const PADDING = 70;
 
 // 启动一个异步任务，专门处理流水线
 export async function startPipeline(documentId: string) {
@@ -68,7 +72,7 @@ export async function startPipeline(documentId: string) {
     await pdf2png(pdfPath, allImagesDir);
 
     // 5.3 根据Exam的数据分割PDF文件成多份试卷，保存到不同的文件夹 public/pipeline/{scheduleDocumentId}/{paperId}
-    const papers: Paper[] = []
+    const papers: Paper[] = [] // 保存所有试卷的id, startPage, endPage
     for (let i = 0; i < studentCount; i++) {
         const paperId = nanoid()
         const paperDir = path.join(rootDir, 'public', 'pipeline', schedule.documentId, paperId);
@@ -78,11 +82,9 @@ export async function startPipeline(documentId: string) {
         // 计算页面范围
         const startPage = i * pagesPerExam;
         const endPage = startPage + pagesPerExam;
-        console.log(startPage, endPage)
         // 根据页面范围，从allImagesDir中获取图片
         const images = fs.readdirSync(allImagesDir);
         const imagesInRange = images.slice(startPage, endPage);
-        console.log(imagesInRange)
         // 将图片保存到paperDir中
         imagesInRange.forEach((image, index) => {
             fs.copyFileSync(path.join(allImagesDir, image), path.join(paperDir, `page-${index}.png`));
@@ -100,7 +102,37 @@ export async function startPipeline(documentId: string) {
             }
         });
 
+        // 5.5 根据Exam的数据，切割题目 public/pipeline/{scheduleDocumentId}/{paperId}/questions
+        const questionsDir = path.join(paperDir, 'questions');
+        if (!fs.existsSync(questionsDir)) {
+            fs.mkdirSync(questionsDir, { recursive: true });
+        }
+
+        // 循环处理每一页
+        for (let i = 0; i < pagesPerExam; i++) {
+            const imgPath = path.join(paperDir, `page-${i}.png`);
+            // 加载当前页图片
+            const image = sharp(imgPath);
+            const imageInfo = await image.metadata();
+            // 过滤出当前页面的组件
+            const pageComponents = exam.examData.components.filter(com => com.position?.pageIndex === i);
+            console.log(`page-${i} has ${pageComponents.length} components`)
+            // 循环处理每个组件
+            for (let compIndex = 0; compIndex < pageComponents.length; compIndex++) {
+                const comp = pageComponents[compIndex];
+                const rect = comp.position;
+                const outputFilePath = path.join(questionsDir, `${comp.id}.png`); // 组件的id作为文件名
+                // 将毫米转换为像素
+                const left = 0;
+                const top = mmToPixels(rect.top, imageInfo) - PADDING;
+                const width = imageInfo.width!;
+                const height = mmToPixels(rect.height, imageInfo) + PADDING * 2;
+                // 裁剪图片
+                await image.clone().extract({ left, top, width, height }).toFile(outputFilePath);
+            }
+        }
     }
 
+    // 6. VLM识别姓名和学号
 
 }
