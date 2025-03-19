@@ -1,5 +1,5 @@
 import path from "path";
-import { Class, ExamSchedule, User } from "../../types/type";
+import { Class, ExamSchedule, Paper, User } from "../../types/type";
 import fs from 'fs';
 import { ExamResponse } from "../../types/exam";
 import { PDFDocument } from "pdf-lib";
@@ -68,6 +68,7 @@ export async function startPipeline(documentId: string) {
     await pdf2png(pdfPath, allImagesDir);
 
     // 5.3 根据Exam的数据分割PDF文件成多份试卷，保存到不同的文件夹 public/pipeline/{scheduleDocumentId}/{paperId}
+    const papers: Paper[] = []
     for (let i = 0; i < studentCount; i++) {
         const paperId = nanoid()
         const paperDir = path.join(rootDir, 'public', 'pipeline', schedule.documentId, paperId);
@@ -86,8 +87,20 @@ export async function startPipeline(documentId: string) {
         imagesInRange.forEach((image, index) => {
             fs.copyFileSync(path.join(allImagesDir, image), path.join(paperDir, `page-${index}.png`));
         });
+
+        // 5.4 更新Schedule的result.papers,追加一条
+        papers.push({ paperId, startPage, endPage })
+        await strapi.documents('api::schedule.schedule').update({
+            documentId: schedule.documentId,
+            data: {
+                result: JSON.stringify({
+                    ...schedule.result,
+                    papers
+                })
+            }
+        });
+
     }
 
-    // 5.4 更新Schedule的result.papers
 
 }
