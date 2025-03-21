@@ -12,7 +12,7 @@ import { recognizeHeader } from "./llm";
 const PADDING = 70;
 
 // 启动一个异步任务，专门处理流水线
-export async function startPipeline(documentId: string) {
+export async function startMatching(documentId: string) {
     // 1. 先通过documentId获得schedule
     const scheduleData = await strapi.documents('api::schedule.schedule').findOne({
         documentId,
@@ -94,7 +94,7 @@ export async function startPipeline(documentId: string) {
         });
 
         // 5.4 更新papers数组,追加一条
-        papers.push({ paperId, startPage, endPage, name: '', studentId: '' })
+        papers.push({ paperId, startPage, endPage, name: '', studentId: '', headerImgUrl: '' })
         // 5.5 根据Exam的数据，切割题目 public/pipeline/{scheduleDocumentId}/{paperId}/questions
         const questionsDir = path.join(paperDir, 'questions');
         if (!fs.existsSync(questionsDir)) {
@@ -143,16 +143,7 @@ export async function startPipeline(documentId: string) {
     papers.forEach((paper, index) => {
         paper.name = headerResults[index].name;
         paper.studentId = headerResults[index].studentId;
-    });
-    // 6.2 更新Schedule的result.papers
-    await strapi.documents('api::schedule.schedule').update({
-        documentId: schedule.documentId,
-        data: {
-            result: JSON.stringify({
-                ...schedule.result,
-                papers
-            })
-        }
+        paper.headerImgUrl = path.join('pipeline', schedule.documentId, paper.paperId, 'questions', `${headerComponentId}.png`)
     });
 
     // 7. 和students和papers进行比对和关联
@@ -185,12 +176,13 @@ export async function startPipeline(documentId: string) {
     console.log(`未匹配试卷: ${unmatchedPapers.length} 份`);
     console.log(`未匹配学生: ${unmatchedStudents.length} 名`);
 
-    // 8. 更新Schedule的result，添加匹配结果
+    // 8. 更新Schedule的result和papers，添加匹配结果
     await strapi.documents('api::schedule.schedule').update({
         documentId: schedule.documentId,
         data: {
             result: JSON.stringify({
                 ...schedule.result,
+                papers,
                 progress: 'MATCH_DONE', // 更新progress
                 matchResult: {
                     matched: matchedPairs.map(pair => ({

@@ -114,7 +114,7 @@ export interface MatchResult {
     }[],
     unmatched: {
         studentIds: string[];
-        paper: {
+        papers: {
             paperId: string;
             headerImgUrl: string;
         }[]
@@ -128,6 +128,7 @@ export interface Paper {
     endPage: number; // 结束页码
     name: string; // 学生姓名
     studentId: string; // 学生id
+    headerImgUrl: string; // 试卷头图片url
 }
 
 export interface StudentPaper {

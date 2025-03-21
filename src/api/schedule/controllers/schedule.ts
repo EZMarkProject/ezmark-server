@@ -3,13 +3,13 @@
  */
 
 import { factories } from '@strapi/strapi'
-import { startPipeline } from '../../../utils/pipeline';
+import { startMatching } from '../../../utils/pipeline';
 
 export default factories.createCoreController('api::schedule.schedule', ({ strapi }) => ({
     /**
      * 流水线函数 
      */
-    async startPipeline(ctx) {
+    async startMatching(ctx) {
         try {
             const { documentId } = ctx.params;
 
@@ -18,7 +18,7 @@ export default factories.createCoreController('api::schedule.schedule', ({ strap
             }
 
             //启动一个异步任务，专门处理流水线
-            startPipeline(documentId);
+            startMatching(documentId);
 
             // 成功的返回值
             const result = {
