@@ -1,14 +1,8 @@
-/**
- * schedule controller
- */
-
 import { factories } from '@strapi/strapi'
-import { startMatching } from '../../../utils/pipeline';
+import { startMatching } from '../../../utils/matching';
+import { startObjective } from '../../../utils/objective';
 
 export default factories.createCoreController('api::schedule.schedule', ({ strapi }) => ({
-    /**
-     * 流水线函数 
-     */
     async startMatching(ctx) {
         try {
             const { documentId } = ctx.params;
@@ -23,7 +17,27 @@ export default factories.createCoreController('api::schedule.schedule', ({ strap
             // 成功的返回值
             const result = {
                 success: true,
-                message: `Pipeline has been started for document ID ${documentId}`,
+                message: `Matching has been started for document ID ${documentId}`,
+                documentId
+            };
+            return result;
+        } catch (error) {
+            ctx.throw(500, error);
+        }
+    },
+    async startObjective(ctx) {
+        try {
+            const { documentId } = ctx.params;
+
+            if (!documentId) {
+                return ctx.badRequest('documentId is required');
+            }
+
+            startObjective(documentId);
+            // 成功的返回值
+            const result = {
+                success: true,
+                message: `Objective has been started for document ID ${documentId}`,
                 documentId
             };
             return result;

@@ -94,7 +94,7 @@ export interface ExamSchedule {
  * MATCH_DONE: 匹配结果以经生成完毕
  * DONE: 流水线已经完成,可以去查看结果
  */
-type ExamScheduleProgress = 'CREATED' | 'UPLOADED' | 'MATCH_START' | 'MATCH_DONE' | 'DONE'
+type ExamScheduleProgress = 'CREATED' | 'UPLOADED' | 'MATCH_START' | 'MATCH_DONE' | 'OBJECTIVE_START' | 'OBJECTIVE_DONE' | 'SUBJECTIVE_START' | 'SUBJECTIVE_DONE' | 'DONE'
 
 // 在试卷提交后的所有数据
 export interface ExamScheduleResult {
