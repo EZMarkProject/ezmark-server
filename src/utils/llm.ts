@@ -11,7 +11,7 @@ const llm = new OpenAI({
 
 export async function recognizeHeader(imagePath: string): Promise<Header> {
     const response = await llm.chat.completions.create({
-        model: "qwen-vl-max-2025-01-25",
+        model: process.env.MODEL_NAME,
         messages: [{
             role: "user",
             content: [
