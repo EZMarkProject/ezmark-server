@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const HeaderSchema = z.object({
-    reason: z.string().describe('Reason for the answer. Think step by step. Output before name and studentId.'),
+    reason: z.string().describe('Reason for the answer. Think step by step. Output this field first.'),
     name: z.string().describe('Student name'),
     studentId: z.string().describe('Student ID'),
 })
@@ -12,7 +12,7 @@ export interface Header {
 }
 
 export const MCQSchema = z.object({
-    reason: z.string().describe('Reason for the answer. Think step by step.'),
+    reason: z.string().describe('Reason for the answer. Think step by step. Output this field first.'),
     answer: z.array(z.string()).describe('Answers, such as ["A"], ["B", "C"]'),
 })
 

@@ -9,7 +9,7 @@ export const HEADER_PROMPT = `
 5. reason的时候请用中文
 ## 输出格式
 请遵守schema的规定,输出JSON格式
-reason字段必须在name和studentId字段之前输出
+**重要**你必须先输出reason字段
 `
 
 export const MCQ_PROMPT = `
@@ -40,5 +40,5 @@ export const MCQ_PROMPT = `
 3. 根据描述,判断出学生的答案是ABCD中的哪一个,如果不是或不确定是ABCD中的哪一个,请输出["Unknown"]
 ## 输出格式
 请遵守schema的规定,输出JSON格式
-reason字段必须在answer字段之前输出
+**重要**你必须先输出reason字段
 `
