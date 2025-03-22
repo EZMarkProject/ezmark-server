@@ -145,6 +145,7 @@ export interface ObjectiveQuestion {
     studentAnswer: string[];
     llmUnknown: boolean; // 是否是LLM识别失败
     score: number; // 这道题的得分
+    imageUrl: string;
 }
 
 export interface SubjectiveQuestion {

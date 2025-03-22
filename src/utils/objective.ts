@@ -94,6 +94,7 @@ export async function startObjective(documentId: string) {
                 studentAnswer: result.answer,
                 llmUnknown: result.answer.length === 0 || result.answer.includes('Unknown'), // 是否是LLM识别失败
                 score: -1, // 客观题的分数最后再计算
+                imageUrl: studentAnswers[index].answerImage,
             });
         });
     }
