@@ -141,9 +141,10 @@ export interface StudentPaper {
 }
 
 export interface ObjectiveQuestion {
-    questionNumber: number;
+    questionId: string;
     studentAnswer: string[];
-    score: number;
+    llmUnknown: boolean; // 是否是LLM识别失败
+    score: number; // 这道题的得分
 }
 
 export interface SubjectiveQuestion {

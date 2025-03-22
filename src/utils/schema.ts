@@ -9,3 +9,11 @@ export interface Header {
     name: string;
     studentId: string;
 }
+
+export const MCQSchema = z.object({
+    answer: z.array(z.string()).describe('Answers, such as ["A"], ["B", "C"]'),
+})
+
+export interface MCQResult {
+    answer: string[];
+}
