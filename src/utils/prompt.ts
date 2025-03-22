@@ -6,6 +6,7 @@ export const HEADER_PROMPT = `
 2. 返回符合schema要求的JSON
 3. 学号通常为8位数字,如果你没有识别到8位,说明大概率错误了,再努力试试
 4. 如果无法识别,返回Unknown
+5. reason的时候请用中文
 ## 输出格式
 请遵守schema的规定,输出JSON格式
 reason字段必须在name和studentId字段之前输出
@@ -18,6 +19,7 @@ export const MCQ_PROMPT = `
 - 你不需要作答题目
 - 你只需要识别和区分题目和学生的作答,提取并输出学生的答案选项
 - 如果你识别不到答案或者有任何一点犹豫或不确定,请输出 ["Unknown"]
+- reason的时候请用中文
 ## 学生作答
 - 学生作答通常为手写体,和题目的字体有明显差别
 - 学生作答只可能是ABCD中的一个或多个,所以你识别到一个不像是ABCD的选项,请输出["Unknown"]
