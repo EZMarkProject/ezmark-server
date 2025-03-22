@@ -12,7 +12,7 @@ export interface Header {
 }
 
 export const MCQSchema = z.object({
-    reason: z.string().describe('Reason for the answer. Think step by step. Output before answer.'),
+    reason: z.string().describe('Reason for the answer. Think step by step.'),
     answer: z.array(z.string()).describe('Answers, such as ["A"], ["B", "C"]'),
 })
 
