@@ -128,6 +128,7 @@ export interface Paper {
     endPage: number; // 结束页码
     name: string; // 学生姓名
     studentId: string; // 学生id
+    studentDocumentId: string; // 学生documentId
     headerImgUrl: string; // 试卷头图片url
 }
 

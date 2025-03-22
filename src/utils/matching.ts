@@ -94,7 +94,7 @@ export async function startMatching(documentId: string) {
         });
 
         // 5.4 更新papers数组,追加一条
-        papers.push({ paperId, startPage, endPage, name: '', studentId: '', headerImgUrl: '' })
+        papers.push({ paperId, startPage, endPage, name: '', studentId: '', headerImgUrl: '', studentDocumentId: '' })
         // 5.5 根据Exam的数据，切割题目 public/pipeline/{scheduleDocumentId}/{paperId}/questions
         const questionsDir = path.join(paperDir, 'questions');
         if (!fs.existsSync(questionsDir)) {
