@@ -9,7 +9,7 @@ import sharp from "sharp";
 import { mmToPixels } from "./tools";
 import { recognizeHeader } from "./llm";
 
-const PADDING = 70;
+const PADDING = 10;
 
 // 启动一个异步任务，专门处理流水线
 export async function startMatching(documentId: string) {

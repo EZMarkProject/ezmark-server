@@ -54,7 +54,7 @@ export interface BaseQuestion extends BaseComponent {
 }
 
 // 定义题目类型
-export type QuestionType = 'multiple-choice' | 'fill-in-blank'
+export type QuestionType = 'multiple-choice' | 'fill-in-blank' | 'open'
 
 // 多选题接口
 export interface MultipleChoiceQuestionData extends BaseQuestion {

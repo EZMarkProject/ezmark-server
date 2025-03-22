@@ -135,10 +135,6 @@ export interface Paper {
 export interface StudentPaper {
     student: Student;
     paperId: string; // 答卷id，未匹配为null,这个ID会在拆分PDF的时候生成
-    headerRecognition: {
-        name: string;
-        id: string
-    },
     objectiveQuestions: ObjectiveQuestion[];
     subjectiveQuestions: SubjectiveQuestion[];
     totalScore: number; // 从0往上加
