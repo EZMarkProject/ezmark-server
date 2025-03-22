@@ -149,8 +149,9 @@ export interface ObjectiveQuestion {
 }
 
 export interface SubjectiveQuestion {
-    questionNumber: number;
+    questionId: string;
     studentAnswer: string;
     aiSuggestion: string;
     score: number;
+    imageUrl: string;
 }
