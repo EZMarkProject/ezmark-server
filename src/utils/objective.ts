@@ -85,7 +85,7 @@ export async function startObjective(documentId: string) {
             const answer = await recognizeMCQ(imagePath);
             return answer;
         }))
-        console.log(`LLM Result: ${question.id}`)
+        console.log(`LLM Result: ${JSON.stringify(llmResult, null, 2)} \n`)
         // 6.3 把llmResult添加到studentPapers中
         llmResult.forEach((result, index) => {
             const studentPaper = schedule.result.studentPapers[index];
