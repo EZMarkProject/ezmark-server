@@ -18,5 +18,14 @@ export default {
                 middlewares: [],
             },
         },
+        {
+            method: 'POST',
+            path: '/schedules/:documentId/startSubjective',
+            handler: 'api::schedule.schedule.startSubjective',
+            config: {
+                policies: [],
+                middlewares: [],
+            },
+        },
     ],
 }; 

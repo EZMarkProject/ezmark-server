@@ -150,8 +150,15 @@ export interface ObjectiveQuestion {
 
 export interface SubjectiveQuestion {
     questionId: string;
-    studentAnswer: string;
-    aiSuggestion: string;
     score: number;
     imageUrl: string;
+    aiSuggestion: SubjectiveLLMResponse;
+    done: boolean; // 是否已经完成
+}
+
+export interface SubjectiveLLMResponse {
+    reasoning: string;
+    score: number;
+    ocrResult: string;
+    suggestion: string;
 }
