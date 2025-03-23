@@ -2,6 +2,9 @@ import { factories } from '@strapi/strapi'
 import { startMatching } from '../../../utils/matching';
 import { startObjective } from '../../../utils/objective';
 import { startSubjective } from '../../../utils/subjective';
+import { askSubjective } from '../../../utils/llm';
+import { cwd } from 'process';
+import path from 'path';
 
 export default factories.createCoreController('api::schedule.schedule', ({ strapi }) => ({
     async startMatching(ctx) {
@@ -62,6 +65,17 @@ export default factories.createCoreController('api::schedule.schedule', ({ strap
                 message: `Subjective has been started for document ID ${documentId}`,
                 documentId
             };
+            return result;
+        } catch (error) {
+            ctx.throw(500, error);
+        }
+    },
+    async askSubjective(ctx) {
+        try {
+            const { question, answer, score, imageUrl } = ctx.request.body;
+            const rootDir = cwd();
+            const imagePath = path.join(rootDir, 'public', imageUrl);
+            const result = await askSubjective({ question, answer, score, imageUrl: imagePath });
             return result;
         } catch (error) {
             ctx.throw(500, error);

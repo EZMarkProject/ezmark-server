@@ -27,5 +27,14 @@ export default {
                 middlewares: [],
             },
         },
+        {
+            method: 'POST',
+            path: '/schedules/askSubjective',
+            handler: 'api::schedule.schedule.askSubjective',
+            config: {
+                policies: [],
+                middlewares: [],
+            },
+        },
     ],
 }; 

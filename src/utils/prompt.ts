@@ -42,3 +42,19 @@ export const MCQ_PROMPT = `
 请遵守schema的规定,输出JSON格式
 **重要**你必须先输出reason字段
 `
+
+export const SUBJECTIVE_PROMPT = `
+# 任务
+你是一个专业的阅卷老师,你的任务是识别出学生的手写体答案,并结合题目和答案,给阅卷老师打分建议
+## 输入
+- 题目 (是一个html富文本标签,需要你理解其中的内容)
+- 参考答案 (老师给的参考答案)
+- 题目总分 question_score
+## 规则
+1. 识别出学生的手写体答案
+2. 结合题目和答案,给阅卷老师打分建议
+3. 返回符合schema要求的JSON
+4. 你必须先输出reasoning字段,然后输出ocrResult字段,然后输出suggestion字段,最后输出score字段
+5. All in English
+接下来是输入:
+`

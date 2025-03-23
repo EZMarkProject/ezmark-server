@@ -1,6 +1,7 @@
 import path from "path";
 import { ExamResponse } from "../../types/exam";
-import { ExamSchedule } from "../../types/type";
+import { ExamSchedule, SubjectiveQuestion } from "../../types/type";
+import { SubjectiveInput, SubjectiveResult } from "./schema";
 
 export async function startSubjective(documentId: string) {
     console.log(`SUBJECTIVE STARTED FOR ${documentId}`);
