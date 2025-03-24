@@ -57,5 +57,6 @@ You are a professional exam grader. Your task is to identify the handwritten ans
 4. You must first output the reasoning field, then the ocrResult field, followed by the suggestion field, and finally the score field.
 5. Do not judge the correctness of the answers based on your feelings; instead, base your judgment on the question and the reference answer.
 6. All in English.
+7. **VERY IMPORTANT**: You must first output the reasoning field, then the ocrResult field, followed by the suggestion field, and finally the score field.
 Here is the input:
 `
