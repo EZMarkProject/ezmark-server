@@ -4,19 +4,14 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { Header, HeaderSchema, MCQResult, MCQSchema, SubjectiveInput, SubjectiveResult, SubjectiveSchema } from "./schema";
 import { imageToBase64 } from "./tools";
 
-const gpt = new OpenAI({
+const llm = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.OPENAI_BASE_URL,
 });
 
-const qwen = new OpenAI({
-    apiKey: process.env.QWEN_API_KEY,
-    baseURL: process.env.QWEN_BASE_URL,
-});
-
 export async function recognizeHeader(imagePath: string): Promise<Header> {
-    const response = await qwen.chat.completions.create({
-        model: process.env.QWEN_MODEL_NAME,
+    const response = await llm.chat.completions.create({
+        model: process.env.MATCHING_MODEL_NAME,
         messages: [{
             role: "user",
             content: [
@@ -47,8 +42,8 @@ export async function recognizeHeader(imagePath: string): Promise<Header> {
 }
 
 export async function recognizeMCQ(imagePath: string): Promise<MCQResult> {
-    const response = await qwen.chat.completions.create({
-        model: process.env.QWEN_MODEL_NAME,
+    const response = await llm.chat.completions.create({
+        model: process.env.OBJECTIVE_MODEL_NAME,
         messages: [{
             role: "user",
             content: [
@@ -80,8 +75,8 @@ export async function recognizeMCQ(imagePath: string): Promise<MCQResult> {
 export async function askSubjective(question: SubjectiveInput): Promise<SubjectiveResult> {
     console.log('LLM SUBJECTIVE START');
     console.log(question);
-    const response = await gpt.chat.completions.create({
-        model: process.env.OPENAI_MODEL_NAME,
+    const response = await llm.chat.completions.create({
+        model: process.env.SUBJECTIVE_MODEL_NAME,
         messages: [{
             role: "user",
             content: [
