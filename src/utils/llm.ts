@@ -35,7 +35,6 @@ export async function recognizeHeader(imagePath: string): Promise<Header> {
         }],
         response_format: zodResponseFormat(HeaderSchema, 'header')
     });
-    console.log(response.choices);
     try {
         const header = JSON.parse(response.choices[0].message.content);
         return header as Header;
