@@ -1,5 +1,5 @@
 import path from "path";
-import { BaseQuestion, Exam, MultipleChoiceQuestionData, QuestionType, UnionComponent } from "../../types/exam";
+import { Exam, MultipleChoiceQuestionData, QuestionType, UnionComponent } from "../../types/exam";
 import { ExamSchedule } from "../../types/type";
 import { recognizeMCQ } from "./llm";
 import { MCQResult } from "./schema";
@@ -79,7 +79,6 @@ export async function startObjective(documentId: string) {
         })
         // 6.2 发送请求
         console.log(`LLM开始处理MCQ: ${question.id}`)
-        console.log(`Asking ${process.env.MODEL_NAME}`)
         console.log(studentAnswers)
         const llmResult: MCQResult[] = await Promise.all(studentAnswers.map(async (studentAnswer) => {
             const imagePath = path.join(publicDir, studentAnswer.answerImage);

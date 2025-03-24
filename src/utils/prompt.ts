@@ -55,6 +55,7 @@ export const SUBJECTIVE_PROMPT = `
 2. 结合题目和答案,给阅卷老师打分建议
 3. 返回符合schema要求的JSON
 4. 你必须先输出reasoning字段,然后输出ocrResult字段,然后输出suggestion字段,最后输出score字段
-5. All in English
+5. 不要按照自己的感觉来判断答案是否正确,要根据题目和参考答案来判断
+6. All in English
 接下来是输入:
 `
