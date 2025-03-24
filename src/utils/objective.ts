@@ -2,7 +2,6 @@ import path from "path";
 import { Exam, MultipleChoiceQuestionData, QuestionType, UnionComponent } from "../../types/exam";
 import { ExamSchedule } from "../../types/type";
 import { recognizeMCQ } from "./llm";
-import { MCQResult } from "./schema";
 
 export async function startObjective(documentId: string) {
     // 1. 先通过documentId获得schedule
@@ -64,39 +63,51 @@ export async function startObjective(documentId: string) {
         }
     }
 
-    // 6. 遍历每一个question，获得所有学生的答案图片，组装好，发送请求,一道一道题发送
+    // 6. 一次性发送所有学生的所有客观题答案图片的请求
     const rootDir = process.cwd();
     const publicDir = path.join(rootDir, 'public');
+
+    // 6.1 收集所有学生的所有答案图片
+    const allStudentAnswers = [];
     for (const question of objectiveQuestions) {
         const questionId = question.id;
-        // 6.1 收集所有学生的答案图片
-        const studentAnswers = schedule.result.papers.map((paper) => {
-            return {
+        schedule.result.papers.forEach((paper) => {
+            allStudentAnswers.push({
                 studentId: paper.studentId,
                 paperId: paper.paperId,
+                questionId: questionId,
                 answerImage: path.join('pipeline', schedule.documentId, paper.paperId, 'questions', `${questionId}.png`)
-            }
-        })
-        // 6.2 发送请求
-        console.log(`LLM开始处理MCQ: ${question.id}`)
-        console.log(studentAnswers)
-        const llmResult: MCQResult[] = await Promise.all(studentAnswers.map(async (studentAnswer) => {
-            const imagePath = path.join(publicDir, studentAnswer.answerImage);
-            const answer = await recognizeMCQ(imagePath);
-            return answer;
-        }))
-        console.log(`LLM Result: ${JSON.stringify(llmResult, null, 2)} \n`)
-        // 6.3 把llmResult添加到studentPapers中
-        llmResult.forEach((result, index) => {
-            const studentPaper = schedule.result.studentPapers[index];
-            studentPaper.objectiveQuestions.push({
-                questionId: question.id,
-                studentAnswer: result.answer,
-                llmUnknown: result.answer.length === 0 || result.answer.includes('Unknown'), // 是否是LLM识别失败
-                score: -1, // 客观题的分数最后再计算
-                imageUrl: studentAnswers[index].answerImage,
             });
         });
+    }
+
+    // 6.2 一次性发送所有请求
+    console.log(`LLM starts to process all MCQ answers, there are ${allStudentAnswers.length} answers`);
+    const allLlmResults = await Promise.all(allStudentAnswers.map(async (studentAnswer) => {
+        const imagePath = path.join(publicDir, studentAnswer.answerImage);
+        const answer = await recognizeMCQ(imagePath);
+        return {
+            ...studentAnswer,
+            result: answer
+        };
+    }));
+    console.log(`All LLM requests have been processed`);
+
+    // 6.3 把allLlmResults添加到studentPapers中
+    for (const result of allLlmResults) {
+        const studentPaperIndex = schedule.result.studentPapers.findIndex(
+            paper => paper.paperId === result.paperId
+        );
+        if (studentPaperIndex !== -1) {
+            const studentPaper = schedule.result.studentPapers[studentPaperIndex];
+            studentPaper.objectiveQuestions.push({
+                questionId: result.questionId,
+                studentAnswer: result.result.answer,
+                llmUnknown: result.result.answer.length === 0 || result.result.answer.includes('Unknown'),
+                score: -1, // 客观题的分数最后再计算
+                imageUrl: result.answerImage,
+            });
+        }
     }
 
     // 7. 计算客观题的分数

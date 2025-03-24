@@ -4,13 +4,19 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { Header, HeaderSchema, MCQResult, MCQSchema, SubjectiveInput, SubjectiveResult, SubjectiveSchema } from "./schema";
 import { imageToBase64 } from "./tools";
 
-const llm = new OpenAI({
+const gpt = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.OPENAI_BASE_URL,
 });
 
+const qwen = new OpenAI({
+    apiKey: process.env.QWEN_API_KEY,
+    baseURL: process.env.QWEN_BASE_URL,
+});
+
 export async function recognizeHeader(imagePath: string): Promise<Header> {
-    const response = await llm.chat.completions.create({
+    console.log('MODEL NAME', process.env.MATCHING_MODEL_NAME);
+    const response = await gpt.chat.completions.create({
         model: process.env.MATCHING_MODEL_NAME,
         messages: [{
             role: "user",
@@ -29,9 +35,9 @@ export async function recognizeHeader(imagePath: string): Promise<Header> {
         }],
         response_format: zodResponseFormat(HeaderSchema, 'header')
     });
-
+    console.log(response.choices);
     try {
-        const header = JSON.parse(response.choices[0].message.content!);
+        const header = JSON.parse(response.choices[0].message.content);
         return header as Header;
     } catch (error) {
         return {
@@ -42,7 +48,8 @@ export async function recognizeHeader(imagePath: string): Promise<Header> {
 }
 
 export async function recognizeMCQ(imagePath: string): Promise<MCQResult> {
-    const response = await llm.chat.completions.create({
+    console.log('MODEL NAME', process.env.OBJECTIVE_MODEL_NAME);
+    const response = await qwen.chat.completions.create({
         model: process.env.OBJECTIVE_MODEL_NAME,
         messages: [{
             role: "user",
@@ -74,8 +81,9 @@ export async function recognizeMCQ(imagePath: string): Promise<MCQResult> {
 
 export async function askSubjective(question: SubjectiveInput): Promise<SubjectiveResult> {
     console.log('LLM SUBJECTIVE START');
+    console.log('MODEL NAME', process.env.SUBJECTIVE_MODEL_NAME);
     console.log(question);
-    const response = await llm.chat.completions.create({
+    const response = await gpt.chat.completions.create({
         model: process.env.SUBJECTIVE_MODEL_NAME,
         messages: [{
             role: "user",
