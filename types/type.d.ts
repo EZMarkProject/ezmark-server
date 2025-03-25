@@ -94,7 +94,7 @@ export interface ExamSchedule {
  * MATCH_DONE: 匹配结果以经生成完毕
  * DONE: 流水线已经完成,可以去查看结果
  */
-type ExamScheduleProgress = 'CREATED' | 'UPLOADED' | 'MATCH_START' | 'MATCH_DONE' | 'OBJECTIVE_START' | 'OBJECTIVE_DONE' | 'SUBJECTIVE_START' | 'SUBJECTIVE_DONE' | 'DONE'
+type ExamScheduleProgress = 'CREATED' | 'UPLOADED' | 'MATCH_START' | 'MATCH_DONE' | 'OBJECTIVE_START' | 'OBJECTIVE_DONE' | 'SUBJECTIVE_START' | 'SUBJECTIVE_DONE' | 'RESULT_START' | 'RESULT_DONE'
 
 // 在试卷提交后的所有数据
 export interface ExamScheduleResult {
@@ -154,6 +154,7 @@ export interface SubjectiveQuestion {
     imageUrl: string;
     aiSuggestion: SubjectiveLLMResponse;
     done: boolean; // 是否已经完成
+    questionNumber: number; // 问题序号
 }
 
 export interface SubjectiveLLMResponse {
@@ -161,4 +162,11 @@ export interface SubjectiveLLMResponse {
     score: number;
     ocrResult: string;
     suggestion: string;
+}
+
+export interface LLMSubjectiveInput {
+    question: string;
+    answer: string; // 参考答案
+    score: number; // 这道题的总分
+    imageUrl: string; // 题目图片,不带域名
 }

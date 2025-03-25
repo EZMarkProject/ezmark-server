@@ -36,5 +36,14 @@ export default {
                 middlewares: [],
             },
         },
+        {
+            method: 'POST',
+            path: '/schedules/:documentId/calcResult',
+            handler: 'api::schedule.schedule.calcResult',
+            config: {
+                policies: [],
+                middlewares: [],
+            },
+        },
     ],
 }; 

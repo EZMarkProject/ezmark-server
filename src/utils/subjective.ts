@@ -1,5 +1,5 @@
 import path from "path";
-import { ExamResponse } from "../../types/exam";
+import { ExamResponse, FillInBlankQuestionData, OpenQuestionData } from "../../types/exam";
 import { ExamSchedule, SubjectiveQuestion } from "../../types/type";
 import { SubjectiveInput, SubjectiveResult } from "./schema";
 
@@ -17,14 +17,14 @@ export async function startSubjective(documentId: string) {
     // 等1秒,没有理由,假装在加载
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // 2. 筛选出所有的客观题目 OPEN 和 FILL_IN_BLANK
-    const objectiveQuestions = exam.examData.components.filter((component) => {
+    // 2. 筛选出所有的主观题目 OPEN 和 FILL_IN_BLANK
+    const subjectiveQuestions = exam.examData.components.filter((component) => {
         return component.type === 'open' || component.type === 'fill-in-blank';
-    });
+    }) as (OpenQuestionData | FillInBlankQuestionData)[];
 
     // 3. 遍历每一个学生，创建SubjectiveQuestion
     schedule.result.studentPapers.forEach((studentPaper, index) => {
-        schedule.result.studentPapers[index].subjectiveQuestions = objectiveQuestions.map((question) => {
+        schedule.result.studentPapers[index].subjectiveQuestions = subjectiveQuestions.map((question) => {
             return {
                 questionId: question.id,
                 score: -1, // 初始分数为-1
@@ -36,6 +36,7 @@ export async function startSubjective(documentId: string) {
                     ocrResult: '',
                     suggestion: '',
                 },
+                questionNumber: question.questionNumber,
             };
         });
     });

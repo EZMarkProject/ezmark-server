@@ -5,6 +5,7 @@ import { startSubjective } from '../../../utils/subjective';
 import { askSubjective } from '../../../utils/llm';
 import { cwd } from 'process';
 import path from 'path';
+import { calcResult } from '../../../utils/calcResult';
 
 export default factories.createCoreController('api::schedule.schedule', ({ strapi }) => ({
     async startMatching(ctx) {
@@ -76,6 +77,27 @@ export default factories.createCoreController('api::schedule.schedule', ({ strap
             const rootDir = cwd();
             const imagePath = path.join(rootDir, 'public', imageUrl);
             const result = await askSubjective({ question, answer, score, imageUrl: imagePath });
+            return result;
+        } catch (error) {
+            ctx.throw(500, error);
+        }
+    },
+    async calcResult(ctx) {
+        try {
+            const { documentId } = ctx.params;
+
+            if (!documentId) {
+                return ctx.badRequest('documentId is required');
+            }
+
+            calcResult(documentId);
+
+            // 成功的返回值
+            const result = {
+                success: true,
+                message: `Result has been calculated for document ID ${documentId}`,
+                documentId
+            };
             return result;
         } catch (error) {
             ctx.throw(500, error);
