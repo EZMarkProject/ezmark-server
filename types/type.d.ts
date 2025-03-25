@@ -87,6 +87,28 @@ export interface ExamSchedule {
     result: ExamScheduleResult;
 }
 
+// 所有统计数据
+export interface ExamStatistics {
+    average: number; // 平均分
+    highest: number; // 最高分
+    lowest: number; // 最低分
+    median: number; // 中位数
+    standardDeviation: number; // 标准差
+    questions: ExamQuestionStatistics[];
+}
+
+// 每个题目的数据
+export interface ExamQuestionStatistics {
+    questionId: string;
+    average: number; // 平均分
+    highest: number; // 最高分
+    lowest: number; // 最低分
+    median: number; // 中位数
+    standardDeviation: number; // 标准差
+    correct: number; // 正确人数 (客观题)
+    incorrect: number; // 错误人数 (客观题)
+}
+
 /**
  * CREATED: 已经创建Schedule,但还没有上传PDF
  * UPLOADED: 已经上传PDF,但还没有开始流水线
@@ -103,6 +125,7 @@ export interface ExamScheduleResult {
     papers: Paper[]; // 在服务器切割完PDF后设置这个字段
     studentPapers: StudentPaper[]; // 学生答卷,根据卷头信息匹配对应的paper
     matchResult: MatchResult;
+    statistics: ExamStatistics;
 }
 
 // 试卷匹配结果

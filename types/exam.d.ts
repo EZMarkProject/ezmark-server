@@ -19,29 +19,6 @@ export interface Exam {
     semester: string; // 学期 Spring
     examDate: string; // 考试日期
     components: UnionComponent[]; // 试卷中的所有组件
-    statistics: ExamStatistics;
-}
-
-// 所以统计数据
-export interface ExamStatistics {
-    average: number; // 平均分
-    highest: number; // 最高分
-    lowest: number; // 最低分
-    median: number; // 中位数
-    standardDeviation: number; // 标准差
-    questions: ExamQuestionStatistics[];
-}
-
-// 每个题目的数据
-export interface ExamQuestionStatistics {
-    questionId: string;
-    average: number; // 平均分
-    highest: number; // 最高分
-    lowest: number; // 最低分
-    median: number; // 中位数
-    standardDeviation: number; // 标准差
-    correct: number; // 正确人数 (客观题)
-    incorrect: number; // 错误人数 (客观题)
 }
 
 // 联合组建
