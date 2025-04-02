@@ -1,4 +1,4 @@
-import { ExamSchedule } from "../../types/type";
+import { ExamSchedule, ObjectiveQuestion, StudentPaper, SubjectiveQuestion } from "../../types/type";
 import { ExamResponse, QuestionType, MultipleChoiceQuestionData } from "../../types/exam";
 import { ExamQuestionStatistics } from "../../types/type";
 
@@ -51,29 +51,62 @@ export async function calcResult(documentId: string) {
 
     // 4. 计算每个题目的数据
     const questionsStatistics: ExamQuestionStatistics[] = [];
+
+    // 辅助函数：从学生试卷中查找特定题目的分数
+    const findQuestionScore = (studentPaper: StudentPaper, questionId: string): number => {
+        const obj = studentPaper.objectiveQuestions.find(
+            (q: ObjectiveQuestion) => q.questionId === questionId
+        );
+        const subj = studentPaper.subjectiveQuestions.find(
+            (q: SubjectiveQuestion) => q.questionId === questionId
+        );
+        if (obj) {
+            return obj.score;
+        }
+        if (subj) {
+            return subj.score;
+        }
+        throw new Error('Question score not found');
+    };
+
     exam.examData.components.forEach((component) => {
         const allQuestionsType: QuestionType[] = ['multiple-choice', 'fill-in-blank', 'open'];
         if (allQuestionsType.includes(component.type as QuestionType)) {
-            const average = schedule.result.studentPapers.reduce((acc, studentPaper) => acc + studentPaper.objectiveQuestions.find((question) => question.questionId === component.id)?.score || 0, 0) / schedule.result.studentPapers.length;
-            const highest = Math.max(...schedule.result.studentPapers.map((studentPaper) => studentPaper.objectiveQuestions.find((question) => question.questionId === component.id)?.score || 0));
-            const lowest = Math.min(...schedule.result.studentPapers.map((studentPaper) => studentPaper.objectiveQuestions.find((question) => question.questionId === component.id)?.score || 0));
-            const median = schedule.result.studentPapers.sort((a, b) => a.objectiveQuestions.find((question) => question.questionId === component.id)?.score - b.objectiveQuestions.find((question) => question.questionId === component.id)?.score)[Math.floor(schedule.result.studentPapers.length / 2)].objectiveQuestions.find((question) => question.questionId === component.id)?.score;
-            const scores = schedule.result.studentPapers.map(studentPaper => studentPaper.objectiveQuestions.find((question) => question.questionId === component.id)?.score || 0);
-            const standardDeviation = Math.sqrt(scores.reduce((acc, score) => acc + Math.pow(score - average, 2), 0) / scores.length);
+            const average = schedule.result.studentPapers.reduce(
+                (acc, studentPaper) => acc + findQuestionScore(studentPaper, component.id), 0
+            ) / schedule.result.studentPapers.length;
+            const scores = schedule.result.studentPapers.map(
+                studentPaper => findQuestionScore(studentPaper, component.id)
+            );
+            const highest = Math.max(...scores);
+            const lowest = Math.min(...scores);
+            const sortedScores = [...scores].sort((a, b) => a - b);
+            const median = sortedScores[Math.floor(scores.length / 2)];
+            const standardDeviation = Math.sqrt(
+                scores.reduce((acc, score) => acc + Math.pow(score - average, 2), 0) / scores.length
+            );
+
             const data: ExamQuestionStatistics = {
                 questionId: component.id,
-                average: average,
-                highest: highest,
-                lowest: lowest,
-                median: median,
-                standardDeviation: standardDeviation,
-                correct: -1, // 只有客观题统计这两个数据
+                average,
+                highest,
+                lowest,
+                median,
+                standardDeviation,
+                correct: -1,
                 incorrect: -1,
             }
+
             if (component.type === 'multiple-choice') {
-                const currentQuestion = exam.examData.components.find((component) => component.id === component.id) as MultipleChoiceQuestionData;
-                data.correct = schedule.result.studentPapers.reduce((acc, studentPaper) => acc + (studentPaper.objectiveQuestions.find((question) => question.questionId === component.id)?.score === currentQuestion.score ? 1 : 0), 0);
-                data.incorrect = schedule.result.studentPapers.reduce((acc, studentPaper) => acc + (studentPaper.objectiveQuestions.find((question) => question.questionId === component.id)?.score !== currentQuestion.score ? 1 : 0), 0);
+                const currentQuestion = exam.examData.components.find(
+                    (comp) => comp.id === component.id
+                ) as MultipleChoiceQuestionData;
+
+                data.correct = schedule.result.studentPapers.reduce(
+                    (acc, studentPaper) => acc + (findQuestionScore(studentPaper, component.id) === currentQuestion.score ? 1 : 0),
+                    0
+                );
+                data.incorrect = schedule.result.studentPapers.length - data.correct;
             }
             questionsStatistics.push(data);
         }
